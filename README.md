@@ -415,4 +415,4 @@ The architecture supports adding:
 
 ---
 
-*Built for AI Hackathon 2024 - Transforming Code Review with Local AI*
+*Built for AI Hackathon 2025 - Transforming Code Review with Local AI*
