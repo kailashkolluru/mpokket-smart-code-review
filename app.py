@@ -1,8 +1,4 @@
 #!/usr/bin/env python3
-"""
-AI Code Review Agent - GitHub Integration with Groq/Llama AI
-Enhanced for Commit-Specific Analysis
-"""
 
 import os
 import json
@@ -41,7 +37,7 @@ DEBUG = os.getenv('DEBUG', 'false').lower() == 'true'
 
 # AI Configuration - Fully Configurable
 MODEL_PATH = os.getenv('MODEL_PATH', '../models/llama3/models/solar/solar-10.7b-instruct-v1.0.Q4_K_M.gguf')
-MODEL_NAME = os.getenv('MODEL_NAME', 'meta-llama-3-8b-instruct')
+MODEL_NAME = os.getenv('MODEL_NAME', 'solar-10.7b-instruct')
 MODEL_TYPE = os.getenv('MODEL_TYPE', 'auto')  # auto, llama, codellama, deepseek, starcoder, qwen, solar
 
 # Model-specific parameters
@@ -92,7 +88,13 @@ class ConfigurableModelAnalyzer:
                 top_p=0.9,
                 stop=STOP_TOKENS
             )
-            return result['choices'][0]['text'].strip()
+            result_text = result['choices'][0]['text'].strip()
+
+            # Remove system prompt echo if it's repeated at the start
+            if result_text.startswith(system_prompt[:20]):  # match first few words
+                result_text = result_text[len(system_prompt):].lstrip()
+
+            return result_text
         except Exception as e:
             logger.error(f"Failed to summarize business logic for {file_path}: {e}")
             return f"Could not summarize {file_path}"
